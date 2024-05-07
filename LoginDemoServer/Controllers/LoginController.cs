@@ -4,6 +4,7 @@ using LoginDemoServer.DTO;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authentication;
+using LoginDemoServer.ModelsExt;
 
 namespace LoginDemoServer.Controllers
 {
@@ -18,6 +19,7 @@ namespace LoginDemoServer.Controllers
         {
             this.context = context;
         }
+
         // POST api/login
         [HttpPost("login")]
         public IActionResult Login([FromBody] DTO.LoginInfo loginDto)
@@ -74,6 +76,36 @@ namespace LoginDemoServer.Controllers
                 return BadRequest(ex.Message);
             }
 
+        }
+
+
+        [HttpGet("GetUserGrades")]
+        public IActionResult GetUserGrades()
+        {
+            try
+            {
+                //Check if user is logged in 
+                string userEmail = HttpContext.Session.GetString("loggedInUser");
+
+                if (string.IsNullOrEmpty(userEmail))
+                {
+                    return Unauthorized("User is not logged in");
+                }
+                else
+                {
+                    List<Models.Grade> modelsGrade = context.GetUSerGrades(userEmail);
+                    List<DTO.Grade> newList = new List<DTO.Grade>();
+                    foreach (var model in modelsGrade)
+                    {
+                        newList.Add(new DTO.Grade(model));
+                    }
+                    return Ok(newList);
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
 

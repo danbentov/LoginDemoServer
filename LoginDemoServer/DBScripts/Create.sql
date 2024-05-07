@@ -1,7 +1,8 @@
 ﻿Create Database LoginDemoDB
 Go
 
-
+use LoginDemoDB
+go
 
 Create Table Users (
 	Email nvarchar(100) PRIMARY KEY,
